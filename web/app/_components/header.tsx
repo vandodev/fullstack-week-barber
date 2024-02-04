@@ -5,7 +5,7 @@ import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const handleLoginClick = async () =>{
   await signIn();
@@ -24,9 +24,13 @@ const Header = () => {
             <MenuIcon size={16} />
           </Button> */}
 
-          {data?.user 
-            ? <h1>{data.user.name}</h1> 
-            : <Button onClick={handleLoginClick}>Login</Button>
+          {data?.user ? (
+            <div>
+               <h1>{data.user.name}</h1> 
+               <Button onClick={() => signOut()}>Sair</Button>
+            </div>
+           
+            ): (<Button onClick={handleLoginClick}>Login</Button>)
           }          
        
         </CardContent>
