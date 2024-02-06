@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { LogInIcon, LogOutIcon, MenuIcon, UserIcon } from "lucide-react";
+import { CalendarIcon, HomeIcon, LogInIcon, LogOutIcon, MenuIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "./ui/sheet";
 import { signOut, signIn, useSession } from "next-auth/react";
@@ -67,6 +67,26 @@ const Header = () => {
                   </Button>
                 </div>
               )}
+
+              <div className="flex flex-col gap-3 px-5">
+
+                <Button variant="outline" className="justify-start" asChild>
+                  <Link href="/">
+                    <HomeIcon size={18} className="mr-2"/>
+                    Início                  
+                  </Link>
+                </Button>
+
+                {data?.user && (                  
+                  <Button variant="outline" className="justify-start" asChild>
+                    <Link href="/bookings">
+                      <CalendarIcon size={18} className="mr-2"/>
+                      Agendamentos                  
+                    </Link>
+                  </Button>              
+                )}
+
+              </div>
 
             </SheetContent>
           </Sheet>
