@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { LogOutIcon, MenuIcon } from "lucide-react";
+import { LogInIcon, LogOutIcon, MenuIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "./ui/sheet";
-import { signOut, useSession } from "next-auth/react";
+import { signOut, signIn, useSession } from "next-auth/react";
 import { Avatar } from "./ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 
@@ -15,6 +15,8 @@ const Header = () => {
   const {data} = useSession()
 
   const handleLogoutClick = () => signOut();
+  const handleLoginClick = () => signIn("google");
+
 
     return(
         <Card>
@@ -54,7 +56,16 @@ const Header = () => {
                 </div>
 
               ):(
-                <></>
+                <div className="flex flex-col px-5 py-6 gap-3">
+                  <div className="flex items-center gap-2">
+                    <UserIcon size={32} />
+                    <h2 className="font-bold">Olá, faça seu login</h2>
+                  </div>
+                  <Button variant="secondary" className="w-full justify-start" onClick={handleLoginClick}>
+                    <LogInIcon className="mr-2"size={18}/>
+                    Fazer login
+                  </Button>
+                </div>
               )}
 
             </SheetContent>
