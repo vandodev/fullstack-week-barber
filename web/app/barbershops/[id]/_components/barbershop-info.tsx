@@ -4,6 +4,8 @@ import { ChevronLeftIcon, MapIcon, MapPinIcon, MenuIcon, StarIcon, icons } from 
 import Image from "next/image";
 import { Barbershop } from "@prisma/client";
 import { Button } from "@/app/_components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "../../../_components/ui/sheet";
+import SideMenu from "../../../_components/side-menu";
 
 import { useRouter } from "next/navigation";
 
@@ -27,9 +29,22 @@ const BarbershopInfo = ({ barbershop }: BarbershopInfoProps) => {
               <ChevronLeftIcon />
             </Button>
 
-            <Button size="icon" variant="outline" className="z-50 top-4 right-4 absolute">
+            {/* <Button size="icon" variant="outline" className="z-50 top-4 right-4 absolute">
               <MenuIcon />
-            </Button>
+            </Button> */}
+
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button size="icon" variant="outline" className="z-50 absolute top-4 right-4">
+                  <MenuIcon />
+                </Button>
+              </SheetTrigger>
+
+              <SheetContent className="p-0">
+                <SideMenu />
+              </SheetContent>
+            </Sheet>     
+
 
             <Image 
               src={barbershop.imageUrl} 
