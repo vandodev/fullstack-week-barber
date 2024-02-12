@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/app/_components/ui/card";
 import Image from "next/image";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/app/_components/ui/sheet";
 
 interface ServiceItemProps {    
   service: Service;
@@ -47,9 +48,18 @@ const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
                 }).format(Number(service.price))}
               </p>
 
-              <Button variant="secondary" onClick={handleBookingClick}>
-                Reservar
-              </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="secondary" onClick={handleBookingClick}>
+                    Reservar
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="p-0">
+                  <SheetHeader className="text-left px-5 py-6 border-b border-solid border-secondary">
+                    <SheetTitle>Fazer reserva</SheetTitle>
+                  </SheetHeader>                  
+                </SheetContent>
+              </Sheet>
 
             </div>
           </div>
