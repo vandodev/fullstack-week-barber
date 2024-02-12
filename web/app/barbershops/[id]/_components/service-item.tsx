@@ -1,23 +1,24 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Service } from "@prisma/client";
+import { Service, Barbershop } from "@prisma/client";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import Image from "next/image";
 import { signIn} from "next-auth/react";
 import { Calendar } from "@/app/_components/ui/calendar";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { generateDayTimeList } from "../_helpers/hours";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/app/_components/ui/sheet";
 
-interface ServiceItemProps {    
+interface ServiceItemProps {  
+  barbershop: Barbershop;  
   service: Service;
   isAuthenticated: boolean;   
 }
 
-const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
+const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps) => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [hour, setHour] = useState<string | undefined>();
   
@@ -129,6 +130,44 @@ const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
                       ))}
                     </div>
                   )}
+
+                  <div className="py-6 px-5 border-t border-solid border-secondary">
+                      <Card >
+                        <CardContent className="p-3 flex flex-col gap-3">
+                          <div className="flex justify-between">
+                            <h2 className="font-bold">{service.name}</h2>
+                            <h3 className="font-bold text-sm">
+                              {Intl.NumberFormat("pt-BR", {
+                                style: "currency",
+                                currency: "BRL",
+                              }).format(Number(service.price))}
+                            </h3>
+                          </div>
+                          
+                          {date && (
+                            <div className="flex justify-between">
+                              <h3 className="text-gray-400 text-sm">Data</h3>
+                              <h4 className="text-sm">{format(date, "dd 'de' MMMM", {
+                                locale: ptBR
+                              })}</h4>
+                            </div>
+                          )}
+
+                          {hour && (
+                            <div className="flex justify-between">
+                              <h3 className="text-gray-400 text-sm">Hora</h3>
+                              <h4 className="text-sm">{hour}</h4>
+                            </div>
+                          )}
+
+                            <div className="flex justify-between">
+                              <h3 className="text-gray-400 text-sm">Barbearia</h3>
+                              <h4 className="text-sm">{barbershop.name}</h4>
+                            </div>
+
+                        </CardContent>
+                      </Card>
+                  </div>
                
                 </SheetContent>
               </Sheet>
