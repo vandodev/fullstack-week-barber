@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Service } from "@prisma/client";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
@@ -9,6 +9,7 @@ import { signIn} from "next-auth/react";
 import { Calendar } from "@/app/_components/ui/calendar";
 import { addDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { generateDayTimeList } from "../_helpers/hours";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/app/_components/ui/sheet";
 
 interface ServiceItemProps {    
@@ -17,13 +18,25 @@ interface ServiceItemProps {
 }
 
 const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [hour, setHour] = useState<string | undefined>();
+  
+  const handleHourClick = () => {
+    setHour(hour);
+  };
 
   const handleBookingClick = () => {
     if (!isAuthenticated) {
       return signIn("google");
     }
   };
+
+  
+  const timeList = useMemo(() => {
+    return date ? generateDayTimeList(date): []
+  },[date])
+
+  console.log({timeList})
 
   return(
     <Card>
@@ -64,6 +77,7 @@ const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
 
                    <div className="py-6">
                     <Calendar
+                      onSelect={setDate}
                       mode="single"
                       selected={date}
                       locale={ptBR}
@@ -93,6 +107,23 @@ const ServiceItem = ({ service, isAuthenticated }: ServiceItemProps) => {
                       }}
                     />
                   </div>
+
+                  
+                  {/* Mostrar lista de horários apenas se alguma data estiver selecionada */}                 
+                  {date && (
+                    <div className="flex gap-3 overflow-x-auto py-6 px-5 border-t border-solid border-secondary [&::-webkit-scrollbar]:hidden">
+                      {timeList.map((time) => (
+                        <Button
+                          onClick={handleHourClick}
+                          variant= "default"
+                          className="rounded-full"
+                          key={time}
+                        >
+                          {time}
+                        </Button>
+                      ))}
+                    </div>
+                  )}
                
                 </SheetContent>
               </Sheet>
