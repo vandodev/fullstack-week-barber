@@ -14,6 +14,7 @@ import { generateDayTimeList } from "../_helpers/hours";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/app/_components/ui/sheet";
 import { saveBooking } from "@/app/barbershops/[id]/actions/save-booking";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface ServiceItemProps {  
   barbershop: Barbershop;  
@@ -22,6 +23,7 @@ interface ServiceItemProps {
 }
 
 const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps) => {
+  const router = useRouter();
   const { data } = useSession();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [hour, setHour] = useState<string | undefined>();
@@ -73,7 +75,7 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
         }),
         action: {
           label: "Visualizar",
-          onClick: () => console.log("Agendado"),
+          onClick: () => router.push("/bookings"),
         },
       });
 
