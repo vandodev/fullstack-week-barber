@@ -13,6 +13,7 @@ import { ptBR } from "date-fns/locale";
 import { generateDayTimeList } from "../_helpers/hours";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/app/_components/ui/sheet";
 import { saveBooking } from "@/app/barbershops/[id]/actions/save-booking";
+import { toast } from "sonner";
 
 interface ServiceItemProps {  
   barbershop: Barbershop;  
@@ -61,7 +62,20 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
         date: newDate,
         userId: (data.user as any).id,
       });
+
       setSheetIsOpen(false);
+      setHour(undefined);
+      setDate(undefined);
+
+      toast("Reserva realizada com sucesso!", {
+        description: format(newDate, "'Para' dd 'de' MMMM 'às' HH':'mm'.'", {
+          locale: ptBR,
+        }),
+        action: {
+          label: "Visualizar",
+          onClick: () => console.log("Agendado"),
+        },
+      });
 
     } catch (error) {
       console.error(error);
