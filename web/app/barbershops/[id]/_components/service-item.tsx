@@ -25,6 +25,7 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [hour, setHour] = useState<string | undefined>();
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);
   
   const handleHourClick = (time: string) => {
     setHour(time);
@@ -60,7 +61,7 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
         date: newDate,
         userId: (data.user as any).id,
       });
-      console.log(saveBooking)
+      setSheetIsOpen(false);
 
     } catch (error) {
       console.error(error);
@@ -101,7 +102,7 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
                 }).format(Number(service.price))}
               </p>
 
-              <Sheet>
+              <Sheet  open={sheetIsOpen} onOpenChange={setSheetIsOpen}>
                 <SheetTrigger asChild>
                   <Button variant="secondary" onClick={handleBookingClick}>
                     Reservar
