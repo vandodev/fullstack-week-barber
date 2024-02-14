@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Service, Barbershop } from "@prisma/client";
+import { useState, useEffect, useMemo } from "react";
+import { Service, Barbershop, Booking } from "@prisma/client";
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent } from "@/app/_components/ui/card";
 import Image from "next/image";
@@ -15,6 +15,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter
 import { saveBooking } from "@/app/barbershops/[id]/actions/save-booking";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { getDayBookings } from "../actions/get-day-bookings";
+
 
 interface ServiceItemProps {  
   barbershop: Barbershop;  
@@ -22,17 +24,33 @@ interface ServiceItemProps {
   isAuthenticated: boolean;   
 }
 
-const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps) => {
+const ServiceItem = ({ service,barbershop, isAuthenticated }: ServiceItemProps) => {
   const router = useRouter();
   const { data } = useSession();
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [hour, setHour] = useState<string | undefined>();
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
-  const [sheetIsOpen, setSheetIsOpen] = useState(false);
+  const [sheetIsOpen, setSheetIsOpen] = useState(false);  
+  const [dayBookings, setDayBookings] = useState<Booking[]>([]);
   
   const handleHourClick = (time: string) => {
     setHour(time);
   };
+
+  console.log(dayBookings)
+
+  useEffect(() => {
+    if (!date) {
+      return;
+    }
+
+    const refreshAvailableHours = async () => {
+      const _dayBookings = await getDayBookings(barbershop.id, date);
+      setDayBookings(_dayBookings);
+    };
+
+    refreshAvailableHours();
+  }, [date, barbershop.id]);
   
   const handleDateClick = (date: Date | undefined) => {
     setDate(date);
@@ -86,9 +104,30 @@ const ServiceItem = ({ service, barbershop, isAuthenticated }: ServiceItemProps)
     }
   };
 
+
   const timeList = useMemo(() => {
-    return date ? generateDayTimeList(date): []
-  },[date])
+    if (!date) {
+      return [];
+    }
+
+    return generateDayTimeList(date).filter((time) => {
+      const timeHour = Number(time.split(":")[0]);
+      const timeMinutes = Number(time.split(":")[1]);
+
+      const booking = dayBookings.find((booking) => {
+        const bookingHour = booking.date.getHours();
+        const bookingMinutes = booking.date.getMinutes();
+
+        return bookingHour === timeHour && bookingMinutes === timeMinutes;
+      });
+
+      if (!booking) {
+        return true;
+      }
+
+      return false;
+    });
+  }, [date, dayBookings]);
 
   // console.log({timeList})
 
