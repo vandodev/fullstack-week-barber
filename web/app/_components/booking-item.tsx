@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -7,6 +9,10 @@ import { Prisma } from "@prisma/client";
 import { ptBR } from "date-fns/locale";
 import { format, isFuture } from "date-fns";
 import Image from "next/image";
+import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
+import { cancelBooking } from "../_actions/cancel-booking";
+import { toast } from "sonner";
 
 interface BookingItemProps {
     booking: Prisma.BookingGetPayload<{
@@ -17,8 +23,24 @@ interface BookingItemProps {
     }>;
   }
 
-const BookingItem = ({ booking }: BookingItemProps) => {    
+const BookingItem = ({ booking }: BookingItemProps) => {   
+    const [isDeleteLoading, setIsDeleteLoading] = useState(false); 
     const isBookingConfirmed = isFuture(booking.date);
+
+    const handleCancelClick = async () => {
+        setIsDeleteLoading(true);
+    
+        try {
+          await cancelBooking(booking.id);
+    
+          toast.success("Reserva cancelada com sucesso!");
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsDeleteLoading(false);
+        }
+      };
+
  return(
     <Sheet>
 
@@ -115,6 +137,23 @@ const BookingItem = ({ booking }: BookingItemProps) => {
                         </div>
                     </CardContent>
                 </Card>
+
+                <SheetFooter className="flex-row gap-3 mt-6">
+                    <SheetClose asChild>
+                        <Button className="w-full" variant="secondary">
+                            Voltar
+                        </Button>
+                    </SheetClose>
+                    <Button
+                        onClick={handleCancelClick}
+                        disabled={!isBookingConfirmed || isDeleteLoading}
+                        className="w-full"
+                        variant="destructive"
+                    >
+                        {isDeleteLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Cancelar Reserva
+                    </Button>
+                </SheetFooter>
             </div>
         </SheetContent>
     </Sheet>
